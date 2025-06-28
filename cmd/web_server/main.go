@@ -1,14 +1,28 @@
 package main
 
 import (
+	"database/sql"
 	"log"
-	"net/http"
+
+	_ "github.com/lib/pq"
+	"github.com/maxwell7774/budgeting-backend/internal/app"
+	"github.com/maxwell7774/budgeting-backend/internal/database"
 )
 
 func main() {
-	mux := http.NewServeMux()
 	port := ":8080"
 
-	log.Printf("Listening on port %s", port)
-	log.Fatal(http.ListenAndServe(port, mux))
+	db, err := sql.Open("postgres", "postgres://stitch:@localhost:5432/budgeting?sslmode=disable")
+	if err != nil {
+		log.Fatalf("Error opening database connection: %v", err)
+	}
+
+	dbQueries := database.New(db)
+
+	app := app.NewApp(
+		port,
+		dbQueries,
+	)
+
+	app.Start()
 }
