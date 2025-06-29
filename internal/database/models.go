@@ -10,6 +10,35 @@ import (
 	"github.com/google/uuid"
 )
 
+type LineItem struct {
+	ID             uuid.UUID
+	PlanID         uuid.UUID
+	PlanCategoryID uuid.UUID
+	Description    string
+	Deposit        int32
+	Withdrawl      int32
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+}
+
+type Plan struct {
+	ID        uuid.UUID
+	OwnerID   uuid.UUID
+	Name      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type PlanCategory struct {
+	ID        uuid.UUID
+	PlanID    uuid.UUID
+	Name      string
+	Deposit   int32
+	Withdrawl int32
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
 type User struct {
 	ID        uuid.UUID
 	FirstName string

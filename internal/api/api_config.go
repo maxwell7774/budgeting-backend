@@ -10,4 +10,5 @@ type ApiConfig struct {
 	Resp http.ResponseWriter
 	Req  *http.Request
 	DB   *database.Queries
+	User *database.User
 }

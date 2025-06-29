@@ -5,14 +5,36 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/maxwell7774/budgeting-backend/internal/database"
 )
 
+type User struct {
+	ID        uuid.UUID `json:"id"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 func HandlerUsersGet(cfg *ApiConfig) {
-	users, err := cfg.DB.GetUsers(cfg.Req.Context())
+	usersFromDB, err := cfg.DB.GetUsers(cfg.Req.Context())
 	if err != nil {
 		respondWithError(cfg.Resp, http.StatusInternalServerError, "Couldn't retrieve users", err)
 		return
+	}
+
+	users := []User{}
+	for _, u := range usersFromDB {
+		users = append(users, User{
+			ID:        u.ID,
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Email:     u.Email,
+			CreatedAt: u.CreatedAt,
+			UpdatedAt: u.UpdatedAt,
+		})
 	}
 
 	respondWithJSON(cfg.Resp, http.StatusOK, users)
@@ -20,8 +42,8 @@ func HandlerUsersGet(cfg *ApiConfig) {
 
 func HandlerUserCreate(cfg *ApiConfig) {
 	type parameters struct {
-		FirstName string `json:"firstName"`
-		LastName  string `json:"lastName"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
 		Email     string `json:"email"`
 	}
 
@@ -43,17 +65,8 @@ func HandlerUserCreate(cfg *ApiConfig) {
 		return
 	}
 
-	type response struct {
-		ID        string    `json:"id"`
-		FirstName string    `json:"firstName"`
-		LastName  string    `json:"lastName"`
-		Email     string    `json:"email"`
-		CreatedAt time.Time `json:"createdAt"`
-		UpdatedAt time.Time `json:"updatedAt"`
-	}
-
-	respondWithJSON(cfg.Resp, http.StatusCreated, response{
-		ID:        user.ID.String(),
+	respondWithJSON(cfg.Resp, http.StatusCreated, User{
+		ID:        user.ID,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
