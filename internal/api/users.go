@@ -8,6 +8,16 @@ import (
 	"github.com/maxwell7774/budgeting-backend/internal/database"
 )
 
+func HandlerUsersGet(cfg *ApiConfig) {
+	users, err := cfg.DB.GetUsers(cfg.Req.Context())
+	if err != nil {
+		respondWithError(cfg.Resp, http.StatusInternalServerError, "Couldn't retrieve users", err)
+		return
+	}
+
+	respondWithJSON(cfg.Resp, http.StatusOK, users)
+}
+
 func HandlerUserCreate(cfg *ApiConfig) {
 	type parameters struct {
 		FirstName string `json:"firstName"`

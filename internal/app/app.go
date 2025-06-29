@@ -37,6 +37,8 @@ func (app *App) HandleFunc(route string, handler AppHandler) {
 
 func (app *App) Start() {
 	app.HandleFunc("GET /api/v1/hello", api.HandlerHello)
+
+	app.HandleFunc("GET /api/v1/users", api.HandlerUsersGet)
 	app.HandleFunc("POST /api/v1/users", api.HandlerUserCreate)
 
 	log.Printf("Listening on port %s", app.port)
